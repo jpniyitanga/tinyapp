@@ -18,10 +18,13 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase};
-  res.render("urls_index", templateVars);
-  
+  res.render("urls_index", templateVars);  
 });
 
+//Add route to display a new form
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id]};
