@@ -4,6 +4,9 @@ const PORT = 8080;
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); // To parse data from POST
 
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8);
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -24,8 +27,10 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const shortID = generateRandomString();
+  urlDatabase[shortID] = req.body.longURL;
+  console.log(req.body); // Log the POST request body to the console 
+  res.redirect(`/urls/${shortID}`); // Respond with 'Ok' (we will replace this)
 });
 
 //Add route to display a new form
@@ -66,4 +71,4 @@ app.listen(PORT, () => {
 });
 
 
-function generateRandomString() {}
+
