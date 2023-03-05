@@ -4,7 +4,7 @@ const PORT = 8080;
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); // To parse data from POST
 
-function generateRandomString() {
+function  generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
@@ -14,7 +14,7 @@ const urlDatabase = {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!')
+  res.send('Hello!');
 });
 
 app.get("/urls.json", (req, res) => {
@@ -23,13 +23,13 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase};
-  res.render("urls_index", templateVars);  
+  res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   const shortID = generateRandomString();
   urlDatabase[shortID] = req.body.longURL;
-  console.log(req.body); // Log the POST request body to the console 
+  console.log(req.body); // Log the POST request body to the console
   res.redirect(`/urls/${shortID}`); // Respond with new short URL
 });
 
@@ -48,6 +48,11 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
   
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
 });
 
 
