@@ -30,7 +30,7 @@ app.post("/urls", (req, res) => {
   const shortID = generateRandomString();
   urlDatabase[shortID] = req.body.longURL;
   console.log(req.body); // Log the POST request body to the console 
-  res.redirect(`/urls/${shortID}`); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortID}`); // Respond with new short URL
 });
 
 //Redirect shortened URLs to original URL
@@ -49,23 +49,6 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
   
 });
-
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
-// app.get("/set", (req, res) => {
-//   const a = 1;
-//   res.send(`a = ${a}`);
-//  });
- 
-//  app.get("/fetch", (req, res) => {
-//   res.send(`a = ${a}`);
-//  });
-
-
-
 
 
 
