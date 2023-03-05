@@ -20,7 +20,29 @@
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
-        </p>
+        </p>     
+          
+            <h2>Edit</h2>
+            <p class="card-text">
+              <table>
+                <tr>
+                  <td>
+                    <form action="/urls/<%= id %>/edit" method="POST">
+                      <label for="url">New URL</label>
+                      <input type="text" name="url" id="url" value="<%= longURL %>"/>                        
+                                   
+                  <td>
+                    <button type="submit"> Submit </button> 
+                  </td>
+                </form> 
+                </td>
+                </tr>
+              </table>
+
+            </p>
+               
+       
+
       </div>
       <div class="card-footer text-muted"></div>
     </div>

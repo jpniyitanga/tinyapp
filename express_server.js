@@ -44,6 +44,8 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+
+// Display a URL on urls_index page
 app.get("/urls/:id", (req, res) => {
   const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
@@ -55,6 +57,11 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+// Editing a URL on urls_index page redirects to the urls_show page
+app.post("/urls/:id/edit", (req, res) => {  
+  urlDatabase[req.params.id] = req.body.url;  
+  res.redirect("/urls");
+});
 
 
 
