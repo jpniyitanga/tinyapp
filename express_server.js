@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true })); // To parse data from POST
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -19,6 +21,11 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase};
   res.render("urls_index", templateVars);  
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
 //Add route to display a new form
@@ -57,3 +64,6 @@ app.get("/urls/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port${PORT}`);
 });
+
+
+function generateRandomString() {}
