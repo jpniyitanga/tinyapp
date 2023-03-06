@@ -21,16 +21,23 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase};
-  res.render("urls_index", templateVars);
-});
 
 app.post("/urls", (req, res) => {
   const shortID = generateRandomString();
   urlDatabase[shortID] = req.body.longURL;
   console.log(req.body); // Log the POST request body to the console
   res.redirect(`/urls/${shortID}`); // Respond with new short URL
+});
+
+app.get("/urls", (req, res) => {
+  const templateVars = {urls: urlDatabase};
+  res.render("urls_index", templateVars);
+});
+
+app.post("/login", (req, res) => {  
+  res.cookie(req.body.username);
+  res.redirect("/urls");
+
 });
 
 //Redirect shortened URLs to original URL
@@ -44,12 +51,10 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
 // Display a URL on urls_index page
 app.get("/urls/:id", (req, res) => {
   const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id]};
-  res.render("urls_show", templateVars);
-  
+  res.render("urls_show", templateVars);  
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -58,10 +63,12 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 // Editing a URL on urls_index page redirects to the urls_show page
-app.post("/urls/:id/edit", (req, res) => {  
+app.post("/urls/:id", (req, res) => {  
   urlDatabase[req.params.id] = req.body.url;  
   res.redirect("/urls");
 });
+
+
 
 
 
