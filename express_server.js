@@ -38,8 +38,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/login", (req, res) => {  
-  res.cookie("username", req.body.username);
-  // res.cookie(req.body.username);
+  res.cookie("username", req.body.username);  
   res.redirect("/urls");
 });
 
@@ -58,12 +57,13 @@ app.get("/u/:id", (req, res) => {
 
 //Add route to display a new form
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {username: req.cookies["username"]};
+  res.render("urls_new", templateVars);
 });
 
 // Display a URL on urls_index page
 app.get("/urls/:id", (req, res) => {
-  const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id]};
+  const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"]};
   res.render("urls_show", templateVars);  
 });
 
