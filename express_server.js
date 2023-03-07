@@ -1,8 +1,11 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); // To parse data from POST
+app.use(cookieParser());
 
 function  generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
@@ -30,15 +33,22 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase};
+  const templateVars = {username: req.cookies["username"], urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
 
 app.post("/login", (req, res) => {  
-  res.cookie(req.body.username);
+  res.cookie("username", req.body.username);
+  // res.cookie(req.body.username);
   res.redirect("/urls");
-
 });
+
+app.post("/logout", (req, res) => {  
+  // req.session = null;
+  res.clearCookie("username");
+  res.redirect("/urls");  
+});
+
 
 //Redirect shortened URLs to original URL
 app.get("/u/:id", (req, res) => {
@@ -63,7 +73,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 // Editing a URL on urls_index page redirects to the urls_show page
-app.post("/urls/:id", (req, res) => {  
+app.post("/urls/:id/edit", (req, res) => {  
   urlDatabase[req.params.id] = req.body.url;  
   res.redirect("/urls");
 });

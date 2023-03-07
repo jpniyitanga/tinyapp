@@ -10,10 +10,9 @@
     />
     <title>URL - TinyApp Example</title>
   </head>
-
   <body>
     <%- include('partials/_header'); %>
-
+    
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -27,7 +26,7 @@
               <table>
                 <tr>
                   <td>
-                    <form action="/urls/<%= id %>" method="POST">
+                    <form action="/urls/<%= id %>/edit" method="POST">
                       <label for="url">New URL</label>
                       <input type="text" name="url" id="url" value="<%= longURL %>"/>                        
                                    
