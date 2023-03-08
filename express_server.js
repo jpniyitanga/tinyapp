@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const { application, request } = require('express');
 
 const app = express();
 const PORT = 8080;
@@ -16,6 +17,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -24,6 +38,20 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/register", (req,res) => {
+  const templateVars = {username: req.cookies["username"], email: req.body.email, password:req.body.password};
+  res.render("register", templateVars);
+});
+
+app.post('/register', function(req, res) {
+  const {email, password} = req.body;
+  const id = generateRandomString();
+  const user = {id, email, password}; 
+  users[id] = user;
+  res.cookie("user_id", id);
+  console.log(users);
+  res.redirect("/urls");
+});
 
 app.post("/urls", (req, res) => {
   const shortID = generateRandomString();
@@ -41,6 +69,7 @@ app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);  
   res.redirect("/urls");
 });
+
 
 app.post("/logout", (req, res) => {  
   // req.session = null;
@@ -73,7 +102,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 // Editing a URL on urls_index page redirects to the urls_show page
-app.post("/urls/:id/edit", (req, res) => {  
+app.post("/urls/:id", (req, res) => {  
   urlDatabase[req.params.id] = req.body.url;  
   res.redirect("/urls");
 });

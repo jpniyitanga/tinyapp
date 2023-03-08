@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -8,43 +14,21 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>URL - TinyApp Example</title>
+    <title>TinyApp</title>
   </head>
   <body>
     <%- include('partials/_header'); %>
-    
-    <div class="card text-center">
-      <div class="card-header"></div>
-      <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
-        </p>     
-          
-            <h2>Edit</h2>
-            <p class="card-text">
-              <table>
-                <tr>
-                  <td>
-                    <form action="/urls/<%= id %>" method="POST">
-                      <label for="url">New URL</label>
-                      <input type="text" name="url" id="url" value="<%= longURL %>"/>                        
-                                   
-                  <td>
-                    <button type="submit"> Submit </button> 
-                  </td>
-                </form> 
-                </td>
-                </tr>
-              </table>
+    <main style="margin: 1em;">
+      <h3>User Registration</h3>
+      <form action="/register" method="POST">
+        <label for="email">Email:</label>
+        <input type="email" name="email">
+        <label for="password">Password:</label>
+        <input type="password" name="password">
+        <button value="submit">Submit</button>
+      </form>
 
-            </p>
-               
-       
-
-      </div>
-      <div class="card-footer text-muted"></div>
-    </div>
+    </main>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
