@@ -12,6 +12,14 @@ function  generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
+const getUserEmail = function(email) {
+  for (const user in users) {
+    if (email === users[user].email) {
+      return true;
+    }    
+  }
+};
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -48,9 +56,15 @@ app.post('/register', function(req, res) {
   const id = generateRandomString();
   const user = {id, email, password}; 
   users[id] = user;
+  if (!password || !email) {
+    res.status(400).send("Your email or password is invalid. Please try again!");};
+  if (getUserEmail) {
+    res.status(400).send("Your email or password is already registered. Try logging in!")
+  } 
   res.cookie("user_id", id);
   console.log(users);
   res.redirect("/urls");
+  
 });
 
 app.post("/urls", (req, res) => {
