@@ -39,7 +39,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/register", (req,res) => {
-  const templateVars = {username: req.cookies["username"], email: req.body.email, password:req.body.password};
+  const templateVars = {user: req.cookies["user_id"], email: req.body.email, password:req.body.password};
   res.render("register", templateVars);
 });
 
@@ -61,19 +61,20 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {username: req.cookies["username"], urls: urlDatabase};
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {user: user, urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
 
 app.post("/login", (req, res) => {  
-  res.cookie("username", req.body.username);  
+  res.cookie("user_id", req.body.user[id]);  
   res.redirect("/urls");
 });
 
 
 app.post("/logout", (req, res) => {  
   // req.session = null;
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");  
 });
 
@@ -86,13 +87,14 @@ app.get("/u/:id", (req, res) => {
 
 //Add route to display a new form
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]};
+  const user = users[req.cookies["user_id"]]; // Get user from user database
+  const templateVars = {user: user};  
   res.render("urls_new", templateVars);
 });
 
 // Display a URL on urls_index page
 app.get("/urls/:id", (req, res) => {
-  const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"]};
+  const templateVars = {id: req.params.id, longURL: urlDatabase[req.params.id], user: req.cookies["user_id"]};
   res.render("urls_show", templateVars);  
 });
 
