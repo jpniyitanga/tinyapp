@@ -12,11 +12,13 @@ function  generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
-const getUserEmail = function(email) {
+function getUserEmail(email) {
   for (const user in users) {
     if (email === users[user].email) {
       return true;
-    }    
+    } else {
+      return false;   
+    }
   }
 };
 
@@ -47,8 +49,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/register", (req,res) => {
-  const templateVars = {user: req.cookies["user_id"], email: req.body.email, password:req.body.password};
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {user: user, email: req.body.email, password:req.body.password};
   res.render("register", templateVars);
+  // res.clearCookie("user_id"); // How to remove logout button on register page???
 });
 
 app.post('/register', function(req, res) {
@@ -57,10 +61,11 @@ app.post('/register', function(req, res) {
   const user = {id, email, password}; 
   users[id] = user;
   if (!password || !email) {
-    res.status(400).send("Your email or password is invalid. Please try again!");};
-  if (getUserEmail) {
-    res.status(400).send("Your email or password is already registered. Try logging in!")
-  } 
+    res.status(400).send("Your email or password is invalid. Please try again!");
+  };
+  if (getUserEmail(email)) {
+    res.status(400).send("Your email is already registered. Try logging in!");
+  }; 
   res.cookie("user_id", id);
   console.log(users);
   res.redirect("/urls");
@@ -83,6 +88,12 @@ app.get("/urls", (req, res) => {
 app.post("/login", (req, res) => {  
   res.cookie("user_id", req.body.user[id]);  
   res.redirect("/urls");
+});
+
+app.get("/login", (req, res) => {    
+  const user = users[req.cookies["user_id"]];
+  const templateVars = {user:user, email: req.body.email, password: req.body.password};
+  res.render("login", templateVars);  
 });
 
 
