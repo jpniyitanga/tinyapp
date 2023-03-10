@@ -88,16 +88,25 @@ app.post('/register', function(req, res) {
 });
 
 app.post("/urls", (req, res) => {
-  const shortID = generateRandomString();
-  urlDatabase[shortID] = req.body.longURL;
-  console.log(req.body); // Log the POST request body to the console
-  res.redirect(`/urls/${shortID}`); // Respond with new short URL
+  const user = users[req.cookies["user_id"]];
+  if (!user) {
+    return res.send("Sorry, you cannot create a link unless you are a registered user");
+  } else {
+    const shortID = generateRandomString();
+    urlDatabase[shortID] = req.body.longURL;
+    console.log(req.body); // Log the POST request body to the console
+    res.redirect(`/urls/${shortID}`); // Respond with new short URL
+  }
 });
 
 app.get("/urls", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = {user: user, urls: urlDatabase};
-  res.render("urls_index", templateVars);
+  if (!user) {
+    return res.send("Please login to view your shortened URLs.");
+  } else {
+    const templateVars = {user: user, urls: urlDatabase};
+    res.render("urls_index", templateVars);
+  }
 });
 
 app.post("/login", (req, res) => {  
@@ -127,10 +136,14 @@ app.post("/logout", (req, res) => {
 });
 
 
-//Redirect shortened URLs to original URL
+//Redirect short URL to long URL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  if (!longURL) {
+    return res.send("Sorry, the URL requested does not exist");
+  } else {
+    res.redirect(longURL);
+  }
 });
 
 //Add route to display a new form
