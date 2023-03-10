@@ -19,12 +19,12 @@
   <body>
     <%- include('partials/_header'); %>
     <main style="margin: 1em;">
-      <h3>User Login</h3>
+      <h3>Login</h3>
       <form action="/login" method="POST">
         <label for="email">Email:</label>
-        <input type="email" name="email">
+        <input type="email" name="email" placeholder="Enter email">
         <label for="password">Password:</label>
-        <input type="password" name="password">
+        <input type="password" name="password" placeholder="Password">
         <button value="submit">Submit</button>
       </form>
 
