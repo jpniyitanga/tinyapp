@@ -68,8 +68,7 @@ app.get("/urls.json", (req, res) => {
 app.get("/register", (req,res) => {
   const user = users[req.cookies["user_id"]];
   const templateVars = {user: user, email: req.body.email, password:req.body.password};
-  res.render("register", templateVars);
-  // res.clearCookie("user_id"); // How to remove logout button on register page???
+  res.render("register", templateVars);  
 });
 
 app.post('/register', function(req, res) {
@@ -117,7 +116,7 @@ app.post("/login", (req, res) => {
 app.get("/login", (req, res) => {    
   const user = users[req.cookies["user_id"]];  
   const templateVars = {user:user, email: req.body.email, password: req.body.password};
-  res.render("login", templateVars);  
+  res.render("login", templateVars);    
 });
 
 
@@ -135,10 +134,14 @@ app.get("/u/:id", (req, res) => {
 });
 
 //Add route to display a new form
-app.get("/urls/new", (req, res) => {
+app.get("/urls/new", (req, res) => {  
   const user = users[req.cookies["user_id"]]; // Get user from user database
+  if (!user) {
+    return res.redirect("/login");
+  } else {
   const templateVars = {user: user};  
   res.render("urls_new", templateVars);
+  }
 });
 
 // Display a URL on urls_index page
