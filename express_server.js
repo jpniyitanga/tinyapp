@@ -67,8 +67,12 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/register", (req,res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = {user: user, email: req.body.email, password:req.body.password};
-  res.render("register", templateVars);  
+  if (user) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {user: user, email: req.body.email, password:req.body.password};
+    res.render("register", templateVars);  
+  }
 });
 
 app.post('/register', function(req, res) {
@@ -87,6 +91,18 @@ app.post('/register', function(req, res) {
   res.redirect("/urls");  
 });
 
+
+app.get("/urls", (req, res) => {
+  const user = users[req.cookies["user_id"]];
+  if (!user) {
+    return res.send("Please login to view your shortened URLs.");
+  } else {
+    const templateVars = {user: user, urls: urlDatabase};
+    res.render("urls_index", templateVars);
+  }
+});
+
+
 app.post("/urls", (req, res) => {
   const user = users[req.cookies["user_id"]];
   if (!user) {
@@ -99,19 +115,21 @@ app.post("/urls", (req, res) => {
   }
 });
 
-app.get("/urls", (req, res) => {
-  const user = users[req.cookies["user_id"]];
-  if (!user) {
-    return res.send("Please login to view your shortened URLs.");
+
+
+app.get("/login", (req, res) => {    
+  const user = users[req.cookies["user_id"]];  
+  const templateVars = {user:user, email: req.body.email, password: req.body.password};
+  if (user) {
+    res.redirect("/urls");    
   } else {
-    const templateVars = {user: user, urls: urlDatabase};
-    res.render("urls_index", templateVars);
+    res.render("login", templateVars);
   }
 });
 
+
 app.post("/login", (req, res) => {  
-  const user = getUserByEmail(req.body.email); 
-  
+  const user = getUserByEmail(req.body.email);   
   if (!user) {
     res.status(403).send("Email not found.");
   } else if (user.password !== req.body.password) {
@@ -120,12 +138,6 @@ app.post("/login", (req, res) => {
     res.cookie("user_id", user.id);  
     res.redirect("/urls");
   }
-});
-
-app.get("/login", (req, res) => {    
-  const user = users[req.cookies["user_id"]];  
-  const templateVars = {user:user, email: req.body.email, password: req.body.password};
-  res.render("login", templateVars);    
 });
 
 
@@ -140,7 +152,7 @@ app.post("/logout", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   if (!longURL) {
-    return res.send("Sorry, the URL requested does not exist");
+    return res.send("Sorry, the URL requested does not exist.");
   } else {
     res.redirect(longURL);
   }
@@ -163,16 +175,18 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);  
 });
 
-app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
-});
-
 // Editing a URL on urls_index page redirects to the urls_show page
 app.post("/urls/:id", (req, res) => {  
   urlDatabase[req.params.id] = req.body.url;  
   res.redirect("/urls");
 });
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
+});
+
+
 
 
 
