@@ -212,7 +212,13 @@ app.get("/urls/:id", (req, res) => {
   const userID = req.cookies["user_id"]
   const user = users[userID]
   const templateVars = {id: shortID, longURL, user};
-  res.render("urls_show", templateVars);  
+  if (!userID) {
+    res.send("You need to be a registered user to view the long URL for the short URL you entered.");
+  } else if (userID !== urlDatabase[shortID].userID) {
+    res.send("Please login to view your own short URLs.");
+  } else {
+    res.render("urls_show", templateVars); 
+  }
 });
 
 // Editing a URL on urls_index page redirects to the urls_show page
