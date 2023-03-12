@@ -54,12 +54,12 @@ const urlDatabase = {
 
   b2xVn2: {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "aJ48lW"
+    userID: "user2RandomID"
   },
 
   "9sm5xK": {
     longURL: "http://www.google.com",
-    userID: "aJ48lW"
+    userID: "user2RandomID"
   },
 
   b6UTxQ: {
@@ -70,6 +70,11 @@ const urlDatabase = {
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
+  },
+
+  okw3ep: {
+    longURL: "www.canada.ca",
+    userID: "user3RandomID",
   } 
 };
 
@@ -83,6 +88,11 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk",
+  },
+  user3RandomID: {
+    id: "user3RandomID",
+    email: "jean@yahoo.com",
+    password: "123",
   },
 };
 
@@ -205,17 +215,23 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-// Display a URL on urls_index page
+// Displays edit form for a requested URL
 app.get("/urls/:id", (req, res) => {
   const shortID = req.params.id;
-  const longURL = urlDatabase[shortID].longURL
-  const userID = req.cookies["user_id"]
-  const user = users[userID]
+  const longURL = urlDatabase[shortID].longURL;  
+  const userID = req.cookies["user_id"];
+  const user = users[userID];
   const templateVars = {id: shortID, longURL, user};
+
+  
+
+  //GET /urls/:id page returns a relevant error message to the user if they are not logged in.
   if (!userID) {
     res.send("You need to be a registered user to view the long URL for the short URL you entered.");
-  } else if (userID !== urlDatabase[shortID].userID) {
-    res.send("Please login to view your own short URLs.");
+  } 
+  // GET /urls/:id page returns a relevant error message to the user if they do not own the URL.
+  else if (userID !== urlDatabase[shortID].userID) {
+    res.send("Sorry, you are only allowed to see your own short URLs.");
   } else {
     res.render("urls_show", templateVars); 
   }
@@ -223,13 +239,42 @@ app.get("/urls/:id", (req, res) => {
 
 // Editing a URL on urls_index page redirects to the urls_show page
 app.post("/urls/:id", (req, res) => {  
+  const shortID = req.params.id;  
+  const userId = req.cookies["user_id"];
+  
+
+  if (!(shortID in urlDatabase)) {   
+      return res.status(400).send("Sorry, the requested short URL does not exist.");
+    }   
+  
+  
+  // This also covers the case where user is not logged in
+  if (userId !== urlDatabase[shortID].userID) {
+    return res.status(400).send("Sorry, you are not allowed to modify other users' URLs.")
+  }
+  
   urlDatabase[req.params.id] = req.body.url;  
   res.redirect("/urls");
 });
 
+
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
+  const shortID = req.params.id;   
+  const userID = req.cookies["user_id"];
+  
+
+  if (!(shortID in urlDatabase)) {   
+    return res.status(400).send("Sorry, you can only delete existing URLs.");
+  }  
+
+  if (!userID) {
+    res.status(400).send("Sorry, only logged in users are allowed to delete URLs.");
+  } else if (userID !== urlDatabase[shortID].userID) {
+    res.status(400).send("Sorry, you are not allowed to delete other users' URLs.")
+  } else {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+  }
 });
 
 
