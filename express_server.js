@@ -96,6 +96,12 @@ const users = {
     email: "jean@yahoo.com",
     password: "123",
   },
+
+  o3yrra: {
+    id: 'o3yrra',
+    email: '123@abc.com',
+    password: '$2a$10$.cIWUxwxAbmlnTS1d/AT9egpZiLORprinCMyGRWTCCfTbSaT.0MhS'
+  },
 };
 
 app.get('/', (req, res) => {
@@ -179,7 +185,7 @@ app.post("/login", (req, res) => {
   const inPuttedPassword =  req.body.password;  
   const user = getUserByEmail(inPuttedEmail);
   const userEmail = user.email
-  const userPassword = bcrypt.hashSync(user.password, 10);
+  const userPassword = user.password;
   console.log(userEmail);
   console.log(userPassword);
   
