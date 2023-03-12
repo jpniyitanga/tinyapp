@@ -1,6 +1,8 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { application, request } = require('express');
+const bcrypt = require("bcryptjs");
+
 
 const app = express();
 const PORT = 8080;
@@ -123,7 +125,9 @@ app.post('/register', function(req, res) {
     return;
   }; 
   const id = generateRandomString();  
-  const user = {id: id, email: req.body.email, password:req.body.password}; 
+  const email = req.body.email;  
+  const password = bcrypt.hashSync(req.body.password, 10);
+  const user = {id, email, password}; 
   users[id] = user;
   res.cookie("user_id", id);
   console.log(users);
@@ -171,10 +175,20 @@ app.get("/login", (req, res) => {
 
 
 app.post("/login", (req, res) => {  
-  const user = getUserByEmail(req.body.email);   
-  if (!user) {
-    res.status(403).send("Email not found.");
-  } else if (user.password !== req.body.password) {
+  const inPuttedEmail = req.body.email;  
+  const inPuttedPassword =  req.body.password;  
+  const user = getUserByEmail(inPuttedEmail);
+  const userEmail = user.email
+  const userPassword = bcrypt.hashSync(user.password, 10);
+  console.log(userEmail);
+  console.log(userPassword);
+  
+  if (!userEmail) {
+    return res.status(403).send("Email not found.");
+  } 
+  const validation = bcrypt.compareSync(inPuttedPassword, userPassword);
+  console.log(validation);
+  if (!validation) {
     res.status(403).send("Password is incorrect.");
   } else {    
     res.cookie("user_id", user.id);  
