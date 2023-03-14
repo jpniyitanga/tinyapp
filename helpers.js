@@ -6,7 +6,7 @@ function getUserByEmail(email, users) {
       return users[user];
     }
   }
-  return null;
+  return undefined;
 };
 
 module.exports = {getUserByEmail};
