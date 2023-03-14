@@ -3,6 +3,7 @@ const express = require('express');
 const cookieSession = require('cookie-session');
 const { application, request } = require('express');
 const bcrypt = require("bcryptjs");
+const {getUserByEmail} = require('./helpers');
 
 
 const app = express();
@@ -40,14 +41,7 @@ function getUserPassword(password) {
   return false;
 };
 
-function getUserByEmail(email) {
-  for (const user in users) {
-    if (email === users[user].email) {
-      return users[user];
-    }
-  }
-  return null;
-};
+
 
 function urlsForUser(user_id, urlDatabase) {
   userURLs = {};
@@ -134,7 +128,7 @@ app.post('/register', function(req, res) {
   if (!req.body.password || !req.body.email) {
     return res.status(400).send("Your email or password is invalid. Please try again!");
   };  
-  if (getUserByEmail(req.body.email)) {
+  if (getUserByEmail(req.body.email, users)) {
     res.status(400).send("Your email is already registered. Try logging in instead!");
     return;
   }; 
@@ -144,7 +138,7 @@ app.post('/register', function(req, res) {
   const user = {id, email, password}; 
   users[id] = user;    
   req.session.userID = user.id;
-  // console.log(users);
+  console.log(users);
   res.redirect("/urls");  
 });
 
@@ -192,7 +186,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {  
   const inPuttedEmail = req.body.email;  
   const inPuttedPassword =  req.body.password;  
-  const user = getUserByEmail(inPuttedEmail);
+  const user = getUserByEmail(inPuttedEmail, users);
   console.log(user)
   let userEmail;
   let userPassword;
