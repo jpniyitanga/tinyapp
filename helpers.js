@@ -1,5 +1,5 @@
 
-function getUserByEmail(email, users) {  
+const getUserByEmail = function(email, users) {
   console.log("email:", email, "users:", users);
   for (const user in users) {
     if (email === users[user].email) {
