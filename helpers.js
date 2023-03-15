@@ -9,5 +9,21 @@ const getUserByEmail = function(email, users) {
   return undefined;
 };
 
-module.exports = {getUserByEmail};
+
+const generateRandomString = function() {
+  return Math.random().toString(36).substring(2, 8);
+};
+
+const urlsForUser = function(userID, urlDatabase) {
+  const userURLs = {};
+  for (let shortURL in urlDatabase) {
+    // console.log("User urls", id);
+    if (urlDatabase[shortURL].userID === userID) {
+      userURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userURLs;
+};
+
+module.exports = {getUserByEmail, generateRandomString, urlsForUser};
 
